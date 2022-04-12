@@ -8,7 +8,7 @@ import java.util.Date;
 public class SearchUtil {
 
     public static Date convert(String date) {
-        if(StringUtil.isEmpty(date)) return null;
+        if (StringUtil.isEmpty(date)) return null;
         try {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             return simpleDateFormat.parse(date);
@@ -33,7 +33,11 @@ public class SearchUtil {
         if (condition && operator.equals("LIKE")) {
             return " AND " + beanAbrev + "." + atributeName + " " + operator + " '%" + value + "%'";
         } else if (condition) {
-            return " AND " + beanAbrev + "." + atributeName + " " + operator + " '" + value + "'";
+            if (value instanceof Boolean) {
+                return " AND " + beanAbrev + "." + atributeName + " " + operator + " '" + (value.equals(true)?1:0) + "'";
+            } else {
+                return " AND " + beanAbrev + "." + atributeName + " " + operator + " '" + value + "'";
+            }
         }
 
         return "";
@@ -42,7 +46,7 @@ public class SearchUtil {
     public static String addConstraintOr(String beanAbrev, String atributeName, String operator, Object value) {
         boolean condition = value != null;
         if (value != null && value.getClass().getSimpleName().equals("String")) {
-        condition = condition && !value.equals("");
+            condition = condition && !value.equals("");
         }
         if (condition) {
             return " OR " + beanAbrev + "." + atributeName + " " + operator + " '" + value + "'";
